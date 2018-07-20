@@ -1,17 +1,40 @@
-from flask import Flask
-from datetime import datetime
-app = Flask(__name__)
+from flask import Flask, jsonify, request #Import objects from the Flask model
+app = Flask(__name__) #Define app using Flask
 
-@app.route('/')
-def homepage():
-    the_time = datetime.now().strftime("%A, %d %b %Y %l:%M %p")
+languages = [{'name' : 'Javascript'}, {'name' : 'Python'}, {'name' : 'Ruby'}]
 
-    return """
-    <h1>Hello heroku</h1>
-    <p>It is currently {time}.</p>
+@app.route('/', methods=['GET'])
+def test():
+    return jsonify({'message' : 'It works!'})
 
-    <img src="http://loremflickr.com/600/400">
-    """.format(time=the_time)
+@app.route('/lang', methods=['GET'])
+def returnAll():
+    return jsonify({'languages' : languages})
 
-if __name__ == '__main__':
-    app.run(debug=True, use_reloader=True)
+@app.route('/lang/<string:name>', methods=['GET'])
+def returnOne(name):
+    langs = [language for language in languages if language['name'] ==name]
+    return jsonify({'language' : langs[0]})
+
+
+@app.route('/lang', methods=['POST'])
+def addOne():
+    language = {}
+    language['name'] = request.form['name']
+    languages.append(language)
+
+    return_val = {}
+    return_val['languages'] = languages
+
+    return jsonify(return_val)
+
+
+@app.route('/lang/<string:name>', methods=['PUT'])
+def editOne(name):
+    langs = [language for language in languages if language['name'] == name]
+    langs[0]['name'] = request.json['name']
+    return jsonify({'language': langs[0]})
+
+
+if (__name__ == "__main__"):
+    app.run(debug=True, port=8080)
