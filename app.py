@@ -1,40 +1,53 @@
-from flask import Flask, jsonify, request #Import objects from the Flask model
-app = Flask(__name__) #Define app using Flask
+import flask
+from flask import request, jsonify #Import objects from the Flask model
 
-languages = [{'name' : 'Javascript'}, {'name' : 'Python'}, {'name' : 'Ruby'}]
+app = flask.Flask(__name__) #Define app using Flask
+app.config["DEBUG"] = True
+
+# Create some test data for our diary Entries.
+entries = [
+    {'id': 0,
+     'date': '07-07-2018',
+     'title': 'Go to National Library',
+     'body': 'The coldsleep itself was dreamless.'},
+    {'id': 1,
+     'date': '08-07-2018',
+     'title': 'Call mum',
+     'body': 'to wish her happy mothers day!.'}
+]
 
 @app.route('/', methods=['GET'])
-def test():
-    return jsonify({'message' : 'It works!'})
-
-@app.route('/lang', methods=['GET'])
-def returnAll():
-    return jsonify({'languages' : languages})
-
-@app.route('/lang/<string:name>', methods=['GET'])
-def returnOne(name):
-    langs = [language for language in languages if language['name'] ==name]
-    return jsonify({'language' : langs[0]})
+def home():
+    return '''<h1>An online Diary to open emotions, feelings and events</h1>
+<p>A prototype APIs for GETTING all entries and one entry in an online Diary.</p>'''
 
 
-@app.route('/lang', methods=['POST'])
-def addOne():
-    language = {}
-    language['name'] = request.form['name']
-    languages.append(language)
-
-    return_val = {}
-    return_val['languages'] = languages
-
-    return jsonify(return_val)
+@app.route('/api/v1/entries/all', methods=['GET'])
+def api_all():
+    return jsonify(entries)
 
 
-@app.route('/lang/<string:name>', methods=['PUT'])
-def editOne(name):
-    langs = [language for language in languages if language['name'] == name]
-    langs[0]['name'] = request.json['name']
-    return jsonify({'language': langs[0]})
+@app.route('/api/v1/entries', methods=['GET'])
+def api_id():
+    # Check if an ID was provided as part of the URL.
+    # If ID is provided, assign it to a variable.
+    # If no ID is provided, display an error in the browser.
+    if 'id' in request.args:
+        id = int(request.args['id'])
+    else:
+        return "Error: No id field provided. Please specify an id."
 
+    # Create an empty list for our results
+    results = []
 
-if (__name__ == "__main__"):
-    app.run(debug=True, port=8080)
+    # Loop through the data and match results that fit the requested ID.
+    # IDs are unique, but other fields might return many results
+    for entry in entries:
+        if entry['id'] == id:
+            results.append(entry)
+
+    # Use the jsonify function from Flask to convert our list of
+    # Python dictionaries to the JSON format.
+    return jsonify(results)
+
+app.run()
