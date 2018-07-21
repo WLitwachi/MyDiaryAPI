@@ -50,4 +50,16 @@ def api_id():
     # Python dictionaries to the JSON format.
     return jsonify(results)
 
-app.run()
+
+@app.route('/api/v1/entries/all', methods=['POST'])#
+def api_addone():
+    entry = {'id':request.form['id'],'title':request.form['title'],'date':request.form['date'],'body':request.form['body']}
+    entries.append(entry)#adds an entry to our diary
+    return jsonify(entries)
+    # Use the jsonify function from Flask to convert our list of
+    # Python dictionaries to the JSON format.
+
+
+if (__name__ == "__main__"):
+    app.run(debug=True, port=5000)
+
