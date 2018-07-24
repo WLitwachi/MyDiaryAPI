@@ -31,5 +31,25 @@ def api_all(self):
     return jsonify(entries)
 
 
+@app.route('/api/v1/entries', methods=['GET'])
+def api_one():
+    # Check if an ID was provided as part of the URL.
+    # If ID is provided, assign it to a variable.
+    # If no ID is provided, display an error in the browser.
+    if 'id' in request.args:
+        id = int(request.args['id'])
+    else:
+        return "Error: No id field provided. Please specify an id."
+    # Create an empty list for our results
+    results = []
+
+    # Loop through the data and match results that fit the requested ID.
+    # IDs are unique, but other fields might return many results
+    for entry in entries:
+        if entry['id'] == id:
+            results.append(entry)
+    return jsonify(results)
+
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
