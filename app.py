@@ -51,5 +51,12 @@ def api_one():
     return jsonify(results)
 
 
+@app.route('/api/v1/entries/all', methods=['POST'])  # Post a new entry in the dictionary
+def api_addone():
+    entry = {'id':request.form['id'], 'title':request.form['title'], 'date':request.form['date'], 'body':request.form['body']}
+    entries.append(entry)  # adds an entry to our diary
+    return jsonify(entries)
+
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
