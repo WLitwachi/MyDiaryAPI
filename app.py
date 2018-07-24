@@ -58,5 +58,16 @@ def api_addone():
     return jsonify(entries)
 
 
+@app.route('/api/v1/entries/<entryid>',methods=['PUT'])  # Update an entry in the dictionary
+def api_update(entryid):
+    en = [entry for entry in entries if (entry['id'] == entryid)]
+    if 'date' in request.json:
+        en[0]['date'] = request.json['date']
+    if 'title' in request.json:
+        en[0]['title'] = request.json['title']
+    if 'body' in request.json:
+        en[0]['body'] = request.json['body']
+    return jsonify({'entry':en[0]})
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
