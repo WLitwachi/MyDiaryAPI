@@ -1,37 +1,18 @@
-import flask_testing
-from unittest import TestCase
-from flask import jsonify
-import app
+import unittest
 
+from app import app
 
-class testApp(TestCase):
-
-    def test_api_all(self):
-        result = app.api_all()
-        response = jsonify(result)
-        response.status_code = 200
-        self.assertequal(response.status_code, 200)
+class testApp(unittest.TestCase):
+    def set_up(self):
+        self.app = app.test_client()
 
 
     def test_api_one(self):
-        assert (type(id) == int)
-        assert (len(id) == 0), "Abort 404"
-        results = []
-        response = jsonify(results)
-        self.assertequal(response.status_code, "Error: id should be an integer provided.")
+        self.app = app.test_client()
+        response = self.app.get('/api/v1/entries')
+        self.assertEqual(response.status_code, 200)
+        self.assertNotEqual(response.status_code, 404)
+        
 
-
-
-    def test_api_addone(id):
-        assert (type(id) == int)
-        results = []
-        response = jsonify(results)
-        id.assertequal(response.status_code, "Error: id should be an integer provided.")
-
-
-    def test_api_update(id):
-        assert (type(id) == int)
-        results = []
-        response = jsonify(results)
-        id.assertequal(response.status_code, "Error: id should be an integer provided.")
-
+if __name__ == '__main__':
+    unittest.main()
